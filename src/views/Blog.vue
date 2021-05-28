@@ -4,14 +4,23 @@
       <el-container style="margin:10px;padding:10px">
         <el-header
             style="text-align: right; font-size: 12px; padding-right: 40px;height: 40px;vertical-align:center">
-          <el-button type="primary" icon="el-icon-s-custom" @click="dialogFormVisible = true">登录
+          <el-button v-if="$store.getters.isLogined"
+                     type="primary" icon="el-icon-s-custom"
+                     @click="loginVisible = true">登录
           </el-button>
+          <el-dropdown v-if="!$store.getters.isLogined" @command="handleCommand">
+            <span class="el-dropdown-link">{{ $store.getters.getUser.username }}<i
+                class="el-icon-arrow-down el-icon--right"></i></span>
+            <el-dropdown-menu slot="dropdown">
+              <el-dropdown-item command="loginOut">注销</el-dropdown-item>
+            </el-dropdown-menu>
+          </el-dropdown>
         </el-header>
         <el-main>
           <el-table :data="tableData">
             <el-table-column prop="date" label="日期" width="140">
             </el-table-column>
-            <el-table-column prop="name" label="姓名" width="120">
+            <el-table-column prop="username" label="姓名" width="120">
             </el-table-column>
             <el-table-column prop="address" label="地址">
             </el-table-column>
@@ -19,24 +28,12 @@
         </el-main>
       </el-container>
     </el-container>
-    <el-dialog title="登录" :visible.sync="dialogFormVisible" width="20%">
-      <el-form :model="form" :rules="rrs" label-width="60" ref="ref">
-        <el-form-item prop="name">
-          <el-input v-model="form.name" autocomplete="false" placeholder="用户名"
-                    prefix-icon="el-icon-s-custom">
-          </el-input>
-        </el-form-item>
-        <el-form-item prop="password">
-          <el-input style="margin-top: 10px" v-model="form.password" autocomplete="false"
-                    show-password prefix-icon="el-icon-menu" placeholder="密码">
-          </el-input>
-        </el-form-item>
-        <el-form-item style="margin-top: 10px;">
-          <el-button type="primary" @click="submitForm()">登录</el-button>
-          <el-button @click="resetForm('form')">注册</el-button>
-        </el-form-item>
-      </el-form>
-    </el-dialog>
+    <div>
+      <LoginDialog :dialog-form-visible="loginVisible" @onClosed="loginVisible = false"
+                   @onRegister="onRegister"></LoginDialog>
+      <RegistDialog :dialog-form-visible="registVisible" @onClosed="registVisible = false"
+                    @onRegister="onRegister"></RegistDialog>
+    </div>
   </div>
 </template>
 
@@ -50,10 +47,24 @@
 .el-aside {
   color: #333;
 }
+
+.el-dropdown-link {
+  font-size: 16px;
+  cursor: pointer;
+  color: #409EFF;
+}
+
+.el-icon-arrow-down {
+  font-size: 16px;
+}
 </style>
 
 <script>
+import LoginDialog from "@/views/template/LoginDialog";
+import RegistDialog from "@/views/template/RegistDialog";
+
 export default {
+  components: {LoginDialog, RegistDialog},
   data() {
     // function Item(date = '2016-05-', name = '王小虎', address = '上海市普陀区金沙江路 1518 弄') {
     // };
@@ -64,31 +75,21 @@ export default {
     // })
     return {
       tableData: fill,
-      dialogFormVisible: true,
-      form: {
-        name: 'admin',
-        password: 'admin'
-      },
-      rrs: {
-        name: [
-          {required: true, message: '请输入用户名', trigger: 'blur'},
-          {min: 3, max: 15, message: '长度在 3 到 15 个字符', trigger: 'blur'}
-        ],
-        password: [
-          {required: true, message: '请输入密码', trigger: 'change'}
-        ]
-      },
-    };
+      loginVisible: false,
+      registVisible: false,
+    }
   },
   methods: {
-    submitForm() {
-      this.$refs.ref.validate().then((it) => {
-        console.log(it)
-      })
-
+    onRegister(flag) {
+      this.loginVisible = !flag;
+      this.registVisible = flag;
     },
-    resetForm(name) {
-      this.$refs[name].resetFields();
+    handleCommand(command) {
+      switch (command) {
+        case "loginOut":
+          this.$store.commit("REMOVE_INFO")
+      }
+      this.$message('您已退出登录');
     }
   }
 };
