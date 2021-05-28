@@ -4,9 +4,17 @@
       <el-container style="margin:10px;padding:10px">
         <el-header
             style="text-align: right; font-size: 12px; padding-right: 40px;height: 40px;vertical-align:center">
-          <el-button type="primary" icon="el-icon-s-custom"
+          <el-button v-if="$store.getters.isLogined"
+                     type="primary" icon="el-icon-s-custom"
                      @click="loginVisible = true">登录
           </el-button>
+          <el-dropdown v-if="!$store.getters.isLogined" @command="handleCommand">
+            <span class="el-dropdown-link">{{ $store.getters.getUser.username }}<i
+                class="el-icon-arrow-down el-icon--right"></i></span>
+            <el-dropdown-menu slot="dropdown">
+              <el-dropdown-item command="loginOut">注销</el-dropdown-item>
+            </el-dropdown-menu>
+          </el-dropdown>
         </el-header>
         <el-main>
           <el-table :data="tableData">
@@ -39,6 +47,16 @@
 .el-aside {
   color: #333;
 }
+
+.el-dropdown-link {
+  font-size: 16px;
+  cursor: pointer;
+  color: #409EFF;
+}
+
+.el-icon-arrow-down {
+  font-size: 16px;
+}
 </style>
 
 <script>
@@ -65,6 +83,13 @@ export default {
     onRegister(flag) {
       this.loginVisible = !flag;
       this.registVisible = flag;
+    },
+    handleCommand(command) {
+      switch (command) {
+        case "loginOut":
+          this.$store.commit("REMOVE_INFO")
+      }
+      this.$message('您已退出登录');
     }
   }
 };

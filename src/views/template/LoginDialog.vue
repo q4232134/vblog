@@ -1,6 +1,6 @@
 <template>
   <div>
-    <el-dialog title="登录" :visible.sync="formVisible" width="20%"
+    <el-dialog title="登录" :visible.sync="formVisible" width="20%"  :close-on-click-modal="false"
                @close="onClosed">
       <el-form :model="form" :rules="rrs" label-width="60" ref="ref">
         <el-form-item prop="username">
@@ -53,7 +53,12 @@ export default {
         if (it) {
           console.log(this.form.username)
           this.$axios.post("/login", this.form).then(it => {
-            Element.Message.info(it.data.msg)
+            this.$store.commit('SET_TOKEN',it.headers['authorization'])
+            this.$store.commit("SET_USERINFO", it.data.data)
+            this.$message({
+              message: it.data.msg,
+              type: 'success'
+            });
             this.onClosed()
           })
         }
