@@ -4,7 +4,7 @@
                @close="onClosed">
       <el-form :model="form" :rules="rrs" label-width="60" ref="ref">
         <el-form-item prop="username">
-          <el-input v-model="form.username" autocomplete="false" placeholder="用户名"
+          <el-input v-model="form.loginname" autocomplete="false" placeholder="用户名"
                     prefix-icon="el-icon-s-custom">
           </el-input>
         </el-form-item>
@@ -33,11 +33,11 @@ export default {
     return {
       formVisible: false,
       form: {
-        username: 'admin',
+        loginname: 'admin',
         password: 'admin'
       },
       rrs: {
-        username: [
+        loginname: [
           {required: true, message: '请输入用户名', trigger: 'blur'},
           {min: 3, max: 15, message: '长度在 3 到 15 个字符', trigger: 'blur'}
         ],
@@ -51,8 +51,8 @@ export default {
     submitForm() {
       this.$refs.ref.validate().then((it) => {
         if (it) {
-          console.log(this.form.username)
-          this.$axios.post("/login", this.form).then(it => {
+          console.log(this.form.loginname)
+          this.$axios.post("/user/login", this.form).then(it => {
             this.$store.commit('SET_TOKEN',it.headers['authorization'])
             this.$store.commit("SET_USERINFO", it.data.data)
             this.$message({

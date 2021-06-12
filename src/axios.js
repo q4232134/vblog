@@ -11,7 +11,7 @@ axios.interceptors.request.use(config => {
 })
 
 axios.interceptors.response.use(response => {
-        let res = response.data;
+        let res = response;
 
         console.log("=================")
         console.log(res)

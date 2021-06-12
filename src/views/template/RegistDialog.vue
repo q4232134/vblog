@@ -3,8 +3,13 @@
     <el-dialog title="注册" :visible.sync="dialogFormVisible" width="20%"
                :close-on-click-modal="false" @close="onClosed">
       <el-form :model="form" :rules="rrs" label-width="60" ref="ref">
+        <el-form-item prop="loginname">
+          <el-input v-model="form.loginname" autocomplete="false" placeholder="用户名"
+                    prefix-icon="el-icon-s-custom">
+          </el-input>
+        </el-form-item>
         <el-form-item prop="username">
-          <el-input v-model="form.username" autocomplete="false" placeholder="用户名"
+          <el-input v-model="form.username" autocomplete="false" placeholder="昵称"
                     prefix-icon="el-icon-s-custom">
           </el-input>
         </el-form-item>
@@ -20,7 +25,7 @@
         </el-form-item>
         <el-form-item prop="email">
           <el-input v-model="form.email" autocomplete="false"
-                     prefix-icon="el-icon-s-promotion" placeholder="邮箱">
+                    prefix-icon="el-icon-s-promotion" placeholder="邮箱">
           </el-input>
         </el-form-item>
         <el-form-item style="margin-top: 10px;">
@@ -48,10 +53,11 @@ export default {
     }
     return {
       form: {
-        username: 'admin',
+        loginname: 'admin',
+        username: '管理员',
         password: 'admin',
         password2: 'admin',
-        email:'1111@qq.com'
+        email: '1111@qq.com'
       },
       rrs: {
         username: [
@@ -74,7 +80,7 @@ export default {
     submitForm() {
       this.$refs.ref.validate().then((it) => {
         if (it) {
-          this.$axios.post("/user/save", this.form).then(it => {
+          this.$axios.post("/user/regist", this.form).then(it => {
             Element.Message.info(it.data.msg)
             this.onClosed()
           })
