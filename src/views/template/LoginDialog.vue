@@ -53,7 +53,7 @@ export default {
         if (it) {
           console.log(this.form.loginname)
           this.$axios.post("/user/login", this.form).then(it => {
-            this.$store.commit('SET_TOKEN',it.headers['authorization'])
+            this.$store.commit('SET_TOKEN',it.data.token)
             this.$store.commit("SET_USERINFO", it.data.data)
             this.$message({
               message: it.data.msg,

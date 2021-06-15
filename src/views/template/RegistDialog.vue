@@ -81,7 +81,10 @@ export default {
       this.$refs.ref.validate().then((it) => {
         if (it) {
           this.$axios.post("/user/regist", this.form).then(it => {
-            Element.Message.info(it.data.msg)
+            this.$message({
+              message: it.data.msg,
+              type: 'success'
+            });
             this.onClosed()
           })
         }
