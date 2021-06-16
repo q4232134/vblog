@@ -26,6 +26,7 @@ axios.interceptors.response.use(response => {
     },
     error => {
         console.log(error)
+        Element.Message.error(error.message, {duration: 3 * 1000})
         if(error.response.data) {
             error.message = error.response.data.msg
         }
@@ -34,7 +35,6 @@ axios.interceptors.response.use(response => {
             store.commit("REMOVE_INFO")
             router.push("/login")
         }
-        Element.Message.error(error.message, {duration: 3 * 1000})
         return Promise.reject(error)
     }
 
