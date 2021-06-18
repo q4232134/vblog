@@ -4,11 +4,23 @@ import router from './router'
 import store from './store'
 
 axios.defaults.baseURL = "http://localhost:8081"
+axios.defaults.headers
 
-// 前置拦截
-axios.interceptors.request.use(config => {
-    return config
-})
+axios.interceptors.request.use(function (config) {
+    // Do something before request is sent
+    //window.localStorage.getItem("accessToken") 获取token的value
+    let token = localStorage.getItem("token")
+    if (token) {
+        //将token放到请求头发送给服务器,将tokenkey放在请求头中
+        config.headers.token = token;
+        //也可以这种写法
+        // config.headers['accessToken'] = Token;
+        return config;
+    }
+}, function (error) {
+    // Do something with request error
+    return Promise.reject(error);
+});
 
 axios.interceptors.response.use(response => {
         let res = response;
