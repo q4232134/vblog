@@ -8,6 +8,10 @@
                      type="primary" icon="el-icon-s-custom"
                      @click="loginVisible = true">登录
           </el-button>
+          <el-button
+              type="primary" icon="el-icon-s-custom"
+              @click="getUserList">测试
+          </el-button>
           <el-dropdown v-if="!$store.getters.isLogined" @command="handleCommand">
             <span class="el-dropdown-link">{{ $store.getters.getUser.username }}<i
                 class="el-icon-arrow-down el-icon--right"></i></span>
@@ -29,10 +33,13 @@
       </el-container>
     </el-container>
     <div>
-      <LoginDialog :dialog-form-visible="loginVisible" @onClosed="loginVisible = false"
-                   @onRegister="onRegister"></LoginDialog>
-      <RegistDialog :dialog-form-visible="registVisible" @onClosed="registVisible = false"
-                    @onRegister="onRegister"></RegistDialog>
+      <el-dialog title="登录" :visible.sync="loginVisible" width="20%" :close-on-click-modal="false">
+        <LoginView @onRegister="onRegister" @onLoginSuc="onLoginSuc"/>
+      </el-dialog>
+      <el-dialog title="注册" :visible.sync="registVisible" width="20%"
+                 :close-on-click-modal="false">
+        <RegistView  @onBack="onRegister" @onSuc="onRegistSuc"></RegistView>
+      </el-dialog>
     </div>
   </div>
 </template>
@@ -60,11 +67,11 @@
 </style>
 
 <script>
-import LoginDialog from "@/views/template/LoginDialog";
-import RegistDialog from "@/views/template/RegistDialog";
+import LoginView from "@/views/template/LoginView";
+import RegistView from "@/views/template/RegistView";
 
 export default {
-  components: {LoginDialog, RegistDialog},
+  components: {LoginView, RegistView},
   data() {
     // function Item(date = '2016-05-', name = '王小虎', address = '上海市普陀区金沙江路 1518 弄') {
     // };
@@ -84,12 +91,23 @@ export default {
       this.loginVisible = !flag;
       this.registVisible = flag;
     },
+    onLoginSuc() {
+      this.loginVisible = false
+    },
+    onRegistSuc() {
+      this.registVisible = false
+    },
     handleCommand(command) {
       switch (command) {
         case "loginOut":
           this.$store.commit("REMOVE_INFO")
       }
       this.$message('您已退出登录');
+    },
+    getUserList() {
+      this.$axios.post("/user/getUserList/0", this.form).then(it => {
+        console.log(it)
+      })
     }
   }
 };
