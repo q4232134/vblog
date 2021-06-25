@@ -21,14 +21,20 @@
           </el-dropdown>
         </el-header>
         <el-main>
-          <el-table :data="tableData">
-            <el-table-column prop="date" label="日期" width="140">
-            </el-table-column>
-            <el-table-column prop="username" label="姓名" width="120">
-            </el-table-column>
-            <el-table-column prop="address" label="地址">
-            </el-table-column>
-          </el-table>
+          <ul class="infinite-list" v-infinite-scroll="load" style="overflow:auto" >
+            <el-table :data="tableData">
+              <el-table-column prop="title" label="标题" width="140">
+              </el-table-column>
+              <el-table-column prop="imageUrl" label="封面" width="120">
+              </el-table-column>
+              <el-table-column prop="description" label="描述">
+              </el-table-column>
+              <el-table-column prop="content" label="内容">
+              </el-table-column>
+            </el-table>
+            <p v-if="loading">加载中...</p>
+            <p v-if="noMore">没有更多了</p>
+          </ul>
         </el-main>
       </el-container>
     </el-container>
@@ -38,7 +44,7 @@
       </el-dialog>
       <el-dialog title="注册" :visible.sync="registVisible" width="20%"
                  :close-on-click-modal="false">
-        <RegistView  @onBack="onRegister" @onSuc="onRegistSuc"></RegistView>
+        <RegistView @onBack="onRegister" @onSuc="onRegistSuc"></RegistView>
       </el-dialog>
     </div>
   </div>
@@ -73,17 +79,14 @@ import RegistView from "@/views/template/RegistView";
 export default {
   components: {LoginView, RegistView},
   data() {
-    // function Item(date = '2016-05-', name = '王小虎', address = '上海市普陀区金沙江路 1518 弄') {
-    // };
-    let item = {date: '2016-05-', name: '王小虎', address: '上海市普陀区金沙江路 1518 弄'};
-    let fill = Array(10).fill(item);
-    // fill.forEach((it, i) => {
-    //   it.date = it.date + i
-    // })
+    this.getBolgs(0)
     return {
-      tableData: fill,
+      tableData: [],
+      lastPage:1,
+      loading:false,
       loginVisible: false,
       registVisible: false,
+      page: 0
     }
   },
   methods: {
@@ -108,7 +111,27 @@ export default {
       this.$axios.post("/user/getUserList/0", this.form).then(it => {
         console.log(it)
       })
+    },
+    getBolgs(page) {
+      if(this.noMore)return
+      this.loading = true
+      this.$axios.post("/blog/all/"+page, this.form).then(it => {
+        this.tableData.push(...it.data.data.content)
+        this.lastPage = it.data.data.totalPages + 1
+        this.loading = false
+      })
+    },
+    load() {
+      this.getBolgs(this.page++)
     }
-  }
+  },
+  computed: {
+    noMore () {
+      return this.page >= this.lastPage
+    },
+    disabled () {
+      return this.loading || this.noMore
+    }
+  },
 };
 </script>
