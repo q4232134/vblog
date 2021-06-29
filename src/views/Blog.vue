@@ -1,42 +1,45 @@
 <template>
   <div>
-    <el-container style="border: 1px solid #eee">
-      <el-container style="margin:10px;padding:10px">
-        <el-header
-            style="text-align: right; font-size: 12px; padding-right: 40px;height: 40px;vertical-align:center">
-          <el-button v-if="$store.getters.isLogined"
-                     type="primary" icon="el-icon-s-custom"
-                     @click="loginVisible = true">登录
-          </el-button>
-          <el-button
-              type="primary" icon="el-icon-s-custom"
-              @click="getUserList">测试
-          </el-button>
-          <el-dropdown v-if="!$store.getters.isLogined" @command="handleCommand">
+    <el-container style="margin:10px;padding:10px">
+      <el-header
+          style="text-align: right; font-size: 12px; height: 40px;vertical-align:center">
+        <el-button v-if="$store.getters.isLogined"
+                   type="primary" icon="el-icon-s-custom"
+                   @click="loginVisible = true">登录
+        </el-button>
+        <el-dropdown v-if="!$store.getters.isLogined" @command="handleCommand">
             <span class="el-dropdown-link">{{ $store.getters.getUser.username }}<i
                 class="el-icon-arrow-down el-icon--right"></i></span>
-            <el-dropdown-menu slot="dropdown">
-              <el-dropdown-item command="loginOut">注销</el-dropdown-item>
-            </el-dropdown-menu>
-          </el-dropdown>
-        </el-header>
-        <el-main>
-          <ul class="infinite-list" v-infinite-scroll="load" style="overflow:auto" >
-            <el-table :data="tableData">
-              <el-table-column prop="title" label="标题" width="140">
-              </el-table-column>
-              <el-table-column prop="imageUrl" label="封面" width="120">
-              </el-table-column>
-              <el-table-column prop="description" label="描述">
-              </el-table-column>
-              <el-table-column prop="content" label="内容">
-              </el-table-column>
-            </el-table>
-            <p v-if="loading">加载中...</p>
-            <p v-if="noMore">没有更多了</p>
-          </ul>
-        </el-main>
-      </el-container>
+          <el-dropdown-menu slot="dropdown">
+            <el-dropdown-item command="loginOut">注销</el-dropdown-item>
+          </el-dropdown-menu>
+        </el-dropdown>
+      </el-header>
+      <el-main>
+        <ul class="infinite-list" v-infinite-scroll="load" style="overflow:auto">
+          <el-row>
+            <el-col :span="11" :data="tableData" :key="o" v-for="i in 10"
+                    style="padding: 5px;margin: 5px">
+              <el-card :body-style="{ padding: '0px' }" :header=" tableData[i].title">
+                <el-container direction="horizontal" style="border-radius: 15px;border:1px">
+                  <el-aside width="150px" style="box-shadow: 0 2px 4px rgba(0, 0, 0, .12), 0 0 6px rgba(0, 0, 0, .04)">
+                    <el-image  style="height: 90%;padding-top: 5px;" fit="contain" :src="getFilePath( tableData[i].imageUrl)"/>
+                  </el-aside>
+                  <el-main>
+                    <div>{{ tableData[i].content }}</div>
+                    <div style="padding: 14px;">
+                      <time class="time" style="font-size: 4px;color: gray">{{ tableData[i].createTime }}</time>
+                      <el-button type="text" class="button">操作按钮</el-button>
+                    </div>
+                  </el-main>
+                </el-container>
+              </el-card>
+            </el-col>
+          </el-row>
+          <p v-if="loading">加载中...</p>
+          <p v-if="noMore">没有更多了</p>
+        </ul>
+      </el-main>
     </el-container>
     <div>
       <el-dialog title="登录" :visible.sync="loginVisible" width="20%" :close-on-click-modal="false">
@@ -82,8 +85,8 @@ export default {
     this.getBolgs(0)
     return {
       tableData: [],
-      lastPage:1,
-      loading:false,
+      lastPage: 1,
+      loading: false,
       loginVisible: false,
       registVisible: false,
       page: 0
@@ -113,9 +116,9 @@ export default {
       })
     },
     getBolgs(page) {
-      if(this.noMore)return
+      if (this.noMore) return
       this.loading = true
-      this.$axios.post("/blog/all/"+page, this.form).then(it => {
+      this.$axios.post("/blog/all/" + page, this.form).then(it => {
         this.tableData.push(...it.data.data.content)
         this.lastPage = it.data.data.totalPages + 1
         this.loading = false
@@ -123,13 +126,25 @@ export default {
     },
     load() {
       this.getBolgs(this.page++)
+    },
+    getFilename(url) {
+      if (url) {
+        let m = url.toString().match(/\/[a-zA-Z0-9.]*$/);
+        if (m && m.length > 0) {
+          return m[0];
+        }
+      }
+      return "";
+    },
+    getFilePath(url) {
+      return "./cnbeta" + this.getFilename(url)
     }
   },
   computed: {
-    noMore () {
-      return this.page >= this.lastPage
+    noMore() {
+      return this.page >= 1
     },
-    disabled () {
+    disabled() {
       return this.loading || this.noMore
     }
   },
