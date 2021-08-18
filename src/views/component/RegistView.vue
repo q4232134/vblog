@@ -28,7 +28,7 @@
       </el-form-item>
       <el-form-item style="margin-top: 10px;">
         <el-button type="primary" @click="submitForm">提交</el-button>
-        <el-button @click="onBack">返回</el-button>
+        <el-button @click="onBack">取消</el-button>
       </el-form-item>
     </el-form>
   </div>

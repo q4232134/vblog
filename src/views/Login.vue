@@ -22,8 +22,8 @@
 </style>
 
 <script>
-import LoginView from "@/views/template/LoginView";
-import RegistView from "@/views/template/RegistView";
+import LoginView from "@/views/component/LoginView";
+import RegistView from "@/views/component/RegistView";
 import router from "@/router";
 
 export default {

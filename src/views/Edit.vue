@@ -20,7 +20,7 @@
               </el-col>
               <el-col :span="10">
                 <el-form-item prop="imageUrl" style="width: 100%">
-                  <el-input type="text" placeholder="请输入图片url" v-model="blogForm.imageUrl"
+                  <el-input type="text" placeholder="请输入图片url" v-model.lazy="blogForm.imageUrl"
                             show-word-limit>
                   </el-input>
                 </el-form-item>
@@ -37,7 +37,7 @@
       </el-header>
       <el-main class="container">
         <el-form-item prop="content">
-          <mavon-editor class="editor" v-model="blogForm.content" boxShadow='true'/>
+          <mavon-editor class="editor" v-model="blogForm.content" boxShadow="true"/>
         </el-form-item>
       </el-main>
     </el-form>
