@@ -2,25 +2,51 @@
   <div>
     <el-backtop target=".blog"></el-backtop>
     <el-container :style="{height:fullHeight + 'px'}">
-      <el-header
-          style="text-align: right; font-size: 12px; height: 40px;vertical-align:center">
-        <el-button v-if="$store.getters.isLogined"
-                   type="primary" icon="el-icon-star-on"
-                   @click="registVisible = true">注册
-        </el-button>
-        <el-button v-if="$store.getters.isLogined"
-                   type="primary" icon="el-icon-s-custom"
-                   @click="loginVisible = true">登录
-        </el-button>
-        <el-dropdown v-if="!$store.getters.isLogined" @command="handleCommand">
+      <el-header>
+        <el-menu style="text-align: right; font-size: 12px; height: 60px;"
+                 :default-active="activeIndex2"
+                 class="el-menu-demo"
+                 mode="horizontal"
+                 @select="handleSelect"
+                 background-color="#545c64"
+                 text-color="#fff"
+                 active-text-color="#ffd04b">
+          <el-menu-item index="1">处理中心</el-menu-item>
+          <el-submenu index="2">
+            <template slot="title">我的工作台</template>
+            <el-menu-item index="2-1">选项1</el-menu-item>
+            <el-menu-item index="2-2">选项2</el-menu-item>
+            <el-menu-item index="2-3">选项3</el-menu-item>
+            <el-submenu index="2-4">
+              <template slot="title">选项4</template>
+              <el-menu-item index="2-4-1">选项1</el-menu-item>
+              <el-menu-item index="2-4-2">选项2</el-menu-item>
+              <el-menu-item index="2-4-3">选项3</el-menu-item>
+            </el-submenu>
+          </el-submenu>
+          <el-menu-item index="3" disabled>消息中心</el-menu-item>
+
+          <el-button v-if="$store.getters.isLogined"
+                     type="primary" icon="el-icon-s-custom"
+                     @click="loginVisible = true">登录
+          </el-button>
+          <el-button v-if="$store.getters.isLogined"
+                     style="margin-top: 11px;margin-right: 20px"
+                     type="primary" icon="el-icon-star-on"
+                     @click="registVisible = true">注册
+          </el-button>
+          <el-menu-item  v-if="!$store.getters.isLogined" index="1">{{ $store.getters.getUser.username }}</el-menu-item>
+          <el-dropdown v-if="!$store.getters.isLogined" @command="handleCommand">
             <span class="el-dropdown-link">{{ $store.getters.getUser.username }}<i
                 class="el-icon-arrow-down el-icon--right"></i></span>
-          <el-dropdown-menu slot="dropdown">
-            <el-dropdown-item command="loginOut">注销</el-dropdown-item>
-          </el-dropdown-menu>
-        </el-dropdown>
+            <el-dropdown-menu slot="dropdown">
+              <el-dropdown-item command="loginOut">注销</el-dropdown-item>
+            </el-dropdown-menu>
+          </el-dropdown>
+        </el-menu>
+
       </el-header>
-      <el-main class="blog"  style="height: 100%">
+      <el-main class="blog" style="height: 100%">
         <ul class="infinite-list" v-infinite-scroll="load" infinite-scroll-distance="20px"
             :infinite-scroll-disabled="disabled">
           <el-row>
