@@ -2,7 +2,7 @@ version: "3.7"
 services:
   webblog:
     container_name: vueblog-web-test
-    image: webblog:latest
+    image: vueblog-web:latest
     restart: unless-stopped
     build: .
     networks:
