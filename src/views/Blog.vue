@@ -1,7 +1,7 @@
 <template>
   <div>
     <el-backtop target=".blog"></el-backtop>
-    <el-container :style="{height:fullHeight + 'px'}">
+    <el-container :style="{height:fullHeight + 'px;'}">
       <el-header style="float: right; font-size: 12px; height: 60px;background: #545c64;">
         <div style="float: right;width: 100%">
           <el-button-group v-if="$store.getters.isLogined" style="margin-top: 11px;margin-right: 20px;float: right">
@@ -20,11 +20,10 @@
         </div>
       </el-header>
       <el-main class="blog" style="height: 100%">
-        <ul class="infinite-list" v-infinite-scroll="load" infinite-scroll-distance="20px"
-            :infinite-scroll-disabled="disabled">
-          <el-row>
-            <el-col :span="11" v-for="temp in tableData" :key="temp.id"
-                    style="padding: 5px;margin: 5px">
+        <ul class="infinite-list" v-infinite-scroll="load" infinite-scroll-distance="20px" :infinite-scroll-disabled="disabled">
+          <el-row el-row :gutter="10">
+            <el-col :xl="6"  :lg="8" :sm="12" :xs="24" v-for="temp in tableData" :key="temp.id"
+                    style="padding-top: 5px;margin-top: 5px">
               <el-card :body-style="{ padding: '0px' }" :header="temp.title"
                        @onclick="onItemClick(temp)" shadow="hover">
                 <BlogItem :data="temp"/>
