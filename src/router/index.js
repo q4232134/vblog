@@ -6,6 +6,11 @@ Vue.use(VueRouter)
 
 const routes = [
   {
+    path: '/Edit/:id',
+    name: 'Edit',
+    component: Edit
+  },
+  {
     path: '/Edit',
     name: 'Edit',
     component: Edit

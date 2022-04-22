@@ -1,5 +1,5 @@
 <template>
-  <div class="edit">
+  <div class="edit" >
     <el-form :model="blogForm" :rules="rrs" label-width="60" ref="ref">
       <el-header style="height: 100%">
         <el-row :gutter="20">
@@ -42,12 +42,8 @@
       </el-main>
     </el-form>
     <el-footer style="vertical-align: central;text-align: right">
-      <el-button type="primary"
-                 @click="commit(1)">保存
-      </el-button>
-      <el-button type="warning"
-                 @click="commit(2)">发布
-      </el-button>
+      <el-button type="primary" @click="commit(1)">{{ this.saveBtnDes}}</el-button>
+      <el-button type="warning" @click="commit(2)">发布</el-button>
     </el-footer>
   </div>
 </template>
@@ -70,6 +66,7 @@ export default {
   data() {
     return {
       blogForm: {
+        id: "",
         title: "",
         description: "",
         content: "",
@@ -89,6 +86,15 @@ export default {
       }
     }
   },
+  created() {
+    let id = this.$route.params.id;
+    if (id == null) return;
+    this.fullscreenLoading = true;
+    this.$axios.post('/blog/info/'+id).then(it=>{
+      this.blogForm = it.data.data
+      this.fullscreenLoading = false;
+    })
+  },
   methods: {
     commit(value) {
       this.$refs.ref.validate().then((it) => {
@@ -103,6 +109,12 @@ export default {
         }
       })
     },
+  },
+  computed:{
+    saveBtnDes(){
+      if(this.blogForm.id.length === 0)return '保存';
+      else return '修改';
+    }
   }
 }
 </script>
