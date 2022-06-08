@@ -1,5 +1,5 @@
 <template>
-  <div class="edit" >
+  <div v-loading="fullscreenLoading" class="edit">
     <el-form :model="blogForm" :rules="rrs" label-width="60" ref="ref">
       <el-header style="height: 100%">
         <el-row :gutter="20">
@@ -27,9 +27,8 @@
               </el-col>
             </el-row>
             <el-form-item prop="description">
-              <el-input type="textarea" placeholder="请输摘要" v-model="blogForm.description"
-                        maxlength="120"
-                        :autosize="{ minRows: 2, maxRows: 2}">
+              <el-input type="textarea" placeholder="请输摘要" v-model="blogForm.description"  style="width: 500pt; height: 80pt"
+                        maxlength="500" :autosize="{ minRows: 4, maxRows: 4}">
               </el-input>
             </el-form-item>
           </el-col>
@@ -42,8 +41,9 @@
       </el-main>
     </el-form>
     <el-footer style="vertical-align: central;text-align: right">
-      <el-button type="primary" @click="commit(1)">{{ this.saveBtnDes}}</el-button>
-      <el-button type="warning" @click="commit(2)">发布</el-button>
+      <el-button v-preventReClick type="primary" @click="commit()">{{ this.saveBtnDes }}</el-button>
+      <el-button v-preventReClick v-if="blogForm.status!==2" type="warning" @click="publish(2)">发布
+      </el-button>
     </el-footer>
   </div>
 </template>
@@ -65,13 +65,15 @@ export default {
   name: 'edit',
   data() {
     return {
+      fullscreenLoading: false,
+      commitLoading: false,
       blogForm: {
         id: "",
         title: "",
         description: "",
         content: "",
         imageUrl: "",
-        status: "",
+        status: 2,
       }, rrs: {
         content: [
           {required: true, message: '请输入内容', trigger: 'blur'},
@@ -90,29 +92,39 @@ export default {
     let id = this.$route.params.id;
     if (id == null) return;
     this.fullscreenLoading = true;
-    this.$axios.post('/blog/info/'+id).then(it=>{
+    this.$axios.post('/blog/info/' + id).then(it => {
       this.blogForm = it.data.data
       this.fullscreenLoading = false;
     })
   },
   methods: {
-    commit(value) {
+    commit() {
+      this.commitLoading = true
       this.$refs.ref.validate().then((it) => {
-        this.blogForm.status = value
         if (it) {
           this.$axios.post("/blog/edit", this.blogForm).then(it => {
             this.$message({
               message: it.data.msg,
               type: 'success'
             });
+            this.commitLoading = false
           })
         }
       })
     },
+    publish(value) {
+      this.$axios.post("/blog/publish/"+this.blogForm.id+'/'+value).then(it => {
+        this.blogForm.status = it.data.data
+        this.$message({
+          message: it.data.msg,
+          type: 'success'
+        });
+      })
+    }
   },
-  computed:{
-    saveBtnDes(){
-      if(this.blogForm.id.length === 0)return '保存';
+  computed: {
+    saveBtnDes() {
+      if (this.blogForm.id.length === 0) return '保存';
       else return '修改';
     }
   }
